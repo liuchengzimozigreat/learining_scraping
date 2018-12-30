@@ -49,6 +49,16 @@ def get_grade_info(soup):
 	rank = grade_info.find_all('dl')[-1]['title'] # 排名
 	return grade, total_read_num, earn_points, rank
 
+# 返回路径下文件id列表
+def eacharticle_id(filepath):
+	pathDir =  os.listdir(filepath)  #返回指定路径下所有文件和文件夹的名字,并存放于一个列表中
+	id_dict = {}
+	for allDir in pathDir:
+		article_id = re.findall(r'\d{8}', allDir)
+		if len(article_id) != 0:
+			id_dict[article_id[0]] = allDir
+	return id_dict
+
 if __name__ == '__main__':
 	now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	record_time = str(now_time) # 将作为数据存档时间来保存
@@ -101,6 +111,8 @@ if __name__ == '__main__':
 			article_info_lst.append(article)
 
 	# 提取文章属性并保存之，将保存八个信息：文章信息记录的日期——作为索引、文章名、文章类型、创建时间、阅读量、评论量、文章url、该条记录时间(精确到秒)
+	id_dict = eacharticle_id(file_path) # 有时文章名字改了，但文章id不变
+	# print(len(id_dict))
 	for article in article_info_lst:
 		# print(article)
 		span = article.find_all('span') # span包含了四个属性，依次是：article_type, date, read_num, comment_num
@@ -110,20 +122,24 @@ if __name__ == '__main__':
 		comment_num = span[3].get_text() # 评论数
 
 		article_url = article.a['href'] # 文章链接
+		article_id = re.split(r'/', article_url)[-1] # url中最后一部分是文章id
+		print(article_id)
 		# 用'\n'分割结果类似：['', '    原    ', '    linux命令学习汇总      ']，需将最后一个字符串左右两边空格去掉才是我们想要的结果
 		# 用' {2,}'——空格2到无限次分割结果类似：['', 'rails官方指南--建一个简易博客', '']，因此去列表中的第二个作为我们的article_name
 		article_name = re.split(r' {2,}', re.split(r'\n*', str(article.find('a').get_text()))[-1])[1] # 文章名称  当时我还不知道，其实换成re.sub()更好
 
-		file_name = re.sub(r'[\s\':,\.()]*', '', article_name)
-		file = file_path + '\\' + re.findall(r'\w{2,20}', file_name)[0] + '.csv' # 文件名不宜太长，所以最多取20个\w——单词字符[A-Za-z0-9]，过短又会冲突
-		if os.path.exists(file):
-			print('old article:', file)
-			df = pd.read_csv(file, parse_dates=[0], index_col=0, engine='python', encoding='utf_8_sig') # 有时难免程序在一天内多次运行，读入数据是保证一天只记录一个数据
+		if article_id in list(id_dict.keys()): # 通过id判断
+			print('old article:', id_dict[article_id])
+			df = pd.read_csv(file_path + '\\' + id_dict[article_id], parse_dates=[0], index_col=0, engine='python', encoding='utf_8_sig') # 有时难免程序在一天内多次运行，读入数据是保证一天只记录一个数据
+			os.remove(file_path + '\\' + id_dict[article_id]) # 删除旧文章信息，因为文章民资可能改了
 		else:
 			print('NEW ARTICLE:', article_name)
-			df = pd.DataFrame(columns=('article_name', 'article_type', 'create_date', 'read_num', 'comment_num', 'article_url', 'record_time'))
+			df = pd.DataFrame(columns=('article_id', 'article_name', 'article_type', 'create_date', 'read_num', 'comment_num', 'article_url', 'record_time'))
 		# print(date_today)
-		df.loc[date_today] = [article_name, article_type, create_date, read_num, comment_num, article_url, record_time] # 用当天日期作为索引，更新信息
+		df.loc[date_today] = ['article_id', article_name, article_type, create_date, read_num, comment_num, article_url, record_time] # 用当天日期作为索引，更新信息
+
+		file_name = re.sub(r'[\s\':,\.()，-]*', '', article_name) # 将文章名字中那些非正经字符删除
+		file = file_path + '\\' + article_id + re.findall(r'\w{2,20}', file_name)[0] + '.csv' # 文件名不宜太长，所以最多取20个\w——单词字符[A-Za-z0-9]，过短又会冲突
 		df.to_csv(file, encoding='utf_8_sig')
 
 # 下面是一些HTML目标模块的信息，也就这些信息，才能提炼出你想要的结果
