@@ -1,0 +1,51 @@
+'''
+# general_info的信息，包含原创、粉丝、喜欢、评论
+<div class="data-info d-flex item-tiling">
+<dl class="text-center" title="22">
+<dt><a href="https://blog.csdn.net/liuchengzimozigreat?t=1">原创</a></dt>
+<dd><a href="https://blog.csdn.net/liuchengzimozigreat?t=1"><span class="count">22</span></a></dd>
+</dl>
+<dl class="text-center" id="fanBox" title="2">
+<dt>粉丝</dt>
+<dd><span class="count" id="fan">2</span></dd>
+</dl>
+<dl class="text-center" title="5">
+<dt>喜欢</dt>
+<dd><span class="count">5</span></dd>
+</dl>
+<dl class="text-center" title="4">
+<dt>评论</dt>
+<dd><span class="count">4</span></dd>
+</dl>
+</div>
+'''
+
+'''
+# 等级信息包含：等级、总访问量、积分、排名
+<div class="grade-box clearfix">
+<dl>
+<dt>等级：</dt>
+<dd>
+<a href="https://blog.csdn.net/home/help.html#level" target="_blank" title="2级,点击查看等级说明">
+<svg aria-hidden="true" class="icon icon-level">
+<use xlink:href="#csdnc-bloglevel-2"></use>
+</svg>
+</a>
+</dd>
+</dl>
+<dl>
+<dt>访问：</dt>
+<dd title="7462">
+                7462            </dd>
+</dl>
+<dl>
+<dt>积分：</dt>
+<dd title="304">
+                304            </dd>
+</dl>
+<dl title="289473">
+<dt>排名：</dt>
+<dd>28万+</dd>
+</dl>
+</div>
+'''
