@@ -55,7 +55,7 @@ def get_institute_info(url):
 	# print(df)
 	return df
 
-import pandas as pd
+# 按照姓氏排名
 def statistics_of_family_name():
 	file = r'H:\learning like never feel tired\Scraping python\2017UCAS_admission_info\2017_UCAS_Admission_list.csv'
 	df = pd.read_csv(file, index_col=0, engine='python', encoding='utf_8_sig')
@@ -69,7 +69,7 @@ def statistics_of_family_name():
 	file = r'H:\learning like never feel tired\Scraping python\2017UCAS_admission_info\2017_UCAS_student_family_name.csv'
 	# df2.to_csv(file, encoding='utf_8_sig')
 
-	institute_g = df.groupby(['院系所代码', '院系所名称'], as_index=False).size().reset_index()
+	institute_g = df.groupby(['院系所代码', '院系所名称'], as_index=False).size().reset_index() # 分组统计
 	institute_g.rename(columns={0:'人数'}, inplace = True)
 	print(institute_g)
 	institute_g['人数占比']=[str(round(pct*100, 2)) + '%' for pct in institute_g.iloc[:,2]/institute_g.人数.sum()]
