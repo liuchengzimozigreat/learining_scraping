@@ -63,7 +63,6 @@ if __name__ == '__main__':
 	now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	record_time = str(now_time) # 将作为数据存档时间来保存
 	date_today = datetime.datetime.now().date() # 今天的时间，将作为文章索引
-	# print(date_today, record_time)
 
 	URL = "https://blog.csdn.net/liuchengzimozigreat" # 我的blog主页(首页/第一页)
 
@@ -118,7 +117,8 @@ if __name__ == '__main__':
 		span = article.find_all('span') # span包含了四个属性，依次是：article_type, date, read_num, comment_num
 		article_type = re.split(r'\s*', str(span[0]))[3] # 文章类型
 		create_date = span[1].get_text() # 创建时间
-		read_num = span[2].get_text() # 阅读数
+		read_num = re.sub(r'\D*', '', span[2].get_text()) # 阅读数
+		print(read_num)
 		comment_num = span[3].get_text() # 评论数
 
 		article_url = article.a['href'] # 文章链接
@@ -131,11 +131,10 @@ if __name__ == '__main__':
 		if article_id in list(id_dict.keys()): # 通过id判断
 			print('old article:', id_dict[article_id])
 			df = pd.read_csv(file_path + '\\' + id_dict[article_id], parse_dates=[0], index_col=0, engine='python', encoding='utf_8_sig') # 有时难免程序在一天内多次运行，读入数据是保证一天只记录一个数据
-			os.remove(file_path + '\\' + id_dict[article_id]) # 删除旧文章信息，因为文章民资可能改了
+			os.remove(file_path + '\\' + id_dict[article_id]) # 删除旧文章信息，因为文章名字可能改了
 		else:
 			print('NEW ARTICLE:', article_name)
 			df = pd.DataFrame(columns=('article_id', 'article_name', 'article_type', 'create_date', 'read_num', 'comment_num', 'article_url', 'record_time'))
-		# print(date_today)
 		df.loc[date_today] = ['article_id', article_name, article_type, create_date, read_num, comment_num, article_url, record_time] # 用当天日期作为索引，更新信息
 
 		file_name = re.sub(r'[\s\':,\.()，-]*', '', article_name) # 将文章名字中那些非正经字符删除
