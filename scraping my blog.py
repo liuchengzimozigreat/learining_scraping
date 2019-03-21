@@ -83,7 +83,7 @@ if __name__ == '__main__':
 	if os.path.exists(general_info_file):
 		df = pd.read_csv(general_info_file, index_col=0, engine='python', encoding='utf_8_sig', parse_dates=[0])
 	else:
-		df = pd.DataFrame(columns=('self_article_num', 'fans_num', 'like_num', 'comment_num', 'grade', 'total_read_num', 'earn_points', 'rank', 'record_time'))
+		df = pd.DataFrame(columns=('self_article_num', 'fans_num', 'like_num', 'comment_num', 'grade', 'read_num', 'earn_points', 'rank', 'record_time'))
 	df.loc[date_today] = [self_article_num, fans_num, like_num, comment_num, grade, total_read_num, earn_points, rank, record_time] # 用当天日期作为索引,更新信息
 	df.to_csv(general_info_file, encoding='utf_8_sig')
 
