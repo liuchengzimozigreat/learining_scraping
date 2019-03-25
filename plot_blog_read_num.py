@@ -64,8 +64,18 @@ def get_ready_and_plot_file(path):
 		plt.xlabel('date', size=20, color='deepskyblue')
 		plt.xticks(rotation=45)
 		plt.grid(axis='y')
-		plt.show()
-		
+		# plt.show()
+		save_path = r'H:\learning like never feel tired\Scraping python\blog_info_plot'
+		if re.match('AAA', file):
+			plt.savefig(save_path + '\\' + 'General information.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
+		else:
+			if re.match(r'[\'.\,\:\(\)\（\）\/]*', df.article_name[0]):
+				save_article_name = re.sub(r'[\'.\,\:\(\)\（\）\/]*', '', df.article_name[0])
+			else:
+				save_article_name = df.article_name[0]
+			print(save_article_name)
+			plt.savefig(save_path + '\\' + save_article_name +'.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
+		plt.clf() # 不加这个会保留上次的线，而重叠在一起
 
 
 # 画出每个文件中的阅读数

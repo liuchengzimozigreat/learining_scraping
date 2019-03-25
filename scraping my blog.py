@@ -136,7 +136,7 @@ def save_articles_info(soup):
 			df = pd.DataFrame(columns=('article_id', 'article_name', 'article_type', 'create_date', 'read_num', 'comment_num', 'article_url', 'record_time'))
 		df.loc[date_today] = [article_id, article_name, article_type, create_date, read_num, comment_num, article_url, record_time] # 用当天日期作为索引，更新信息
 
-		file_name = re.sub(r'[\s\':,\.()，-]*', '', article_name) # 将文章名字中那些非正经字符删除
+		file_name = re.sub(r'[\s\':,\.()]*', '', article_name) # 将文章名字中那些非正经字符删除
 		file = file_path + '\\' + article_id + re.findall(r'\w{2,20}', file_name)[0] + '.csv' # 文件名不宜太长，所以最多取20个\w——单词字符[A-Za-z0-9]，过短又会冲突
 		df.to_csv(file, encoding='utf_8_sig')
 
