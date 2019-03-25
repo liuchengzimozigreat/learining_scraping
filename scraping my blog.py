@@ -59,22 +59,14 @@ def eacharticle_id(filepath):
 			id_dict[article_id[0]] = allDir
 	return id_dict
 
-if __name__ == '__main__':
-	now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	record_time = str(now_time) # 将作为数据存档时间来保存
-	date_today = datetime.datetime.now().date() # 今天的时间，将作为文章索引
-
-	URL = "https://blog.csdn.net/liuchengzimozigreat" # 我的blog主页(首页/第一页)
-
-	# find list of image holder
-	html = requests.get(URL).text
-	soup = BeautifulSoup(html, 'lxml')
-
+def save_general_info(soup):
 	# 提取总体信息
 	self_article_num, fans_num, like_num, comment_num = get_general_info(soup)
 
 	# 提取等级信息
 	grade, total_read_num, earn_points, rank = get_grade_info(soup)
+
+	print(self_article_num, fans_num, like_num, comment_num, grade, total_read_num, earn_points, rank, record_time)
 	
 
 	# 存储总体信息
@@ -87,6 +79,9 @@ if __name__ == '__main__':
 	df.loc[date_today] = [self_article_num, fans_num, like_num, comment_num, grade, total_read_num, earn_points, rank, record_time] # 用当天日期作为索引,更新信息
 	df.to_csv(general_info_file, encoding='utf_8_sig')
 
+def save_articles_info(soup):
+
+	file_path = r'H:\learning like never feel tired\Scraping python\my_blog_info' # 存储位置
 
 	# 提取各个文章的信息
 	script_lst = soup.find_all('script') # 提取其中的script标签tag，其中script_lst[-9]含有listtotal和pagesize信息
@@ -119,7 +114,8 @@ if __name__ == '__main__':
 		create_date = span[1].get_text() # 创建时间
 		read_num = re.sub(r'\D*', '', span[2].get_text()) # 阅读数
 		print(read_num)
-		comment_num = span[3].get_text() # 评论数
+		comment_num = re.sub(r'\D*', '', span[4].get_text()) # 评论数
+		# print(span)
 
 		article_url = article.a['href'] # 文章链接
 		article_id = re.split(r'/', article_url)[-1] # url中最后一部分是文章id
@@ -128,6 +124,9 @@ if __name__ == '__main__':
 		# 用' {2,}'——空格2到无限次分割结果类似：['', 'rails官方指南--建一个简易博客', '']，因此去列表中的第二个作为我们的article_name
 		article_name = re.split(r' {2,}', re.split(r'\n*', str(article.find('a').get_text()))[-1])[1] # 文章名称  当时我还不知道，其实换成re.sub()更好
 
+		# print(article_id, article_name, article_type, create_date)
+		# print(read_num, comment_num, article_url, record_time, '\n')
+
 		if article_id in list(id_dict.keys()): # 通过id判断
 			print('old article:', id_dict[article_id])
 			df = pd.read_csv(file_path + '\\' + id_dict[article_id], parse_dates=[0], index_col=0, engine='python', encoding='utf_8_sig') # 有时难免程序在一天内多次运行，读入数据是保证一天只记录一个数据
@@ -135,11 +134,32 @@ if __name__ == '__main__':
 		else:
 			print('NEW ARTICLE:', article_name)
 			df = pd.DataFrame(columns=('article_id', 'article_name', 'article_type', 'create_date', 'read_num', 'comment_num', 'article_url', 'record_time'))
-		df.loc[date_today] = ['article_id', article_name, article_type, create_date, read_num, comment_num, article_url, record_time] # 用当天日期作为索引，更新信息
+		df.loc[date_today] = [article_id, article_name, article_type, create_date, read_num, comment_num, article_url, record_time] # 用当天日期作为索引，更新信息
 
 		file_name = re.sub(r'[\s\':,\.()，-]*', '', article_name) # 将文章名字中那些非正经字符删除
 		file = file_path + '\\' + article_id + re.findall(r'\w{2,20}', file_name)[0] + '.csv' # 文件名不宜太长，所以最多取20个\w——单词字符[A-Za-z0-9]，过短又会冲突
 		df.to_csv(file, encoding='utf_8_sig')
+
+
+if __name__ == '__main__':
+	now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	record_time = str(now_time) # 将作为数据存档时间来保存
+	date_today = datetime.datetime.now().date() # 今天的时间，将作为文章索引
+
+	URL = "https://blog.csdn.net/liuchengzimozigreat" # 我的blog主页(首页/第一页)
+
+	# find list of image holder
+	html = requests.get(URL).text
+	soup = BeautifulSoup(html, 'lxml')
+
+	save_general_info(soup)
+
+	save_articles_info(soup)
+
+	
+
+
+	
 
 # 下面是一些HTML目标模块的信息，也就这些信息，才能提炼出你想要的结果
 '''
