@@ -95,18 +95,18 @@ def correct_article_info():
 		if re.match('AAA', file):
 			continue
 		df = pd.read_csv(path+'\\'+file, engine='python', encoding='utf-8-sig', parse_dates=[0], index_col=0) # 传入字典是解析该列并命名为date
-		print(len(df.columns))
+		if df.columns[0] == 'article_name':
+			df.columns=('article_id', 'article_name', 'article_type', 'create_date', 'read_num', 'comment_num', 'article_url', 'record_time')
+		# print(df)
 		# df.read_num = df['read_num'].astype(str) # 如果不重新赋值的话，那么原dataframe中该列就没有变
 		# df.comment_num = df['comment_num'].astype(str)
 		# print(df.dtypes)
 		# df.read_num = [int(re.sub(r'\D*', '', elem)) for elem in df.read_num]
 		# df.comment_num = [int(re.sub(r'\D*', '', elem)) for elem in df.comment_num]
+
 		df.article_id = [df.article_id[len(df.article_id)-1]]*len(df.article_id)
 		print(df)
-		if len(df.columns) == 9:
-			df.to_csv(path+'\\'+file, encoding='utf_8_sig', index=False)
-		else:
-			df.to_csv(path+'\\'+file, encoding='utf_8_sig')
+		df.to_csv(path+'\\'+file, encoding='utf_8_sig')
 
 
 
