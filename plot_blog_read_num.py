@@ -34,6 +34,7 @@ def complement_file(dates, df):
 	# print(new_df)
 	new_df = pd.merge(new_df, df, how='left', on=['date']) # 将含有不完整read_num信息的df与new_df合并，这样new_df含有了完整时间序列和不完整的read_num序列
 	# print(new_df.dtypes
+	print(new_df)
 	new_df = new_df.interpolate()  # 对其进行插值，插值是线性的，插值结果是补全了read_num序列
 	new_df.read_num = new_df['read_num'].astype(int) # 将read_num序列设为int类型
 	# print(new_df)
@@ -48,6 +49,7 @@ def get_ready_and_plot_file(path):
 	for file in files:
 		# if not re.match('AAA', file): #
 		# 	continue
+		# 准备数据
 		df = pd.read_csv(path+'\\'+file, engine='python', encoding='utf-8-sig', parse_dates=[0]) # 传入字典是解析该列并命名为date
 		print(file)
 		dates = pd.date_range(df.iloc[0, 0], df.iloc[-1, 0]) # 获取各个文章起始时间，并生成完整时间序列
@@ -55,6 +57,9 @@ def get_ready_and_plot_file(path):
 			continue
 		complete_df = complement_file(dates, df.loc[:, ('date', 'read_num')]) # 只需要时间和阅读数两列信息就好了
 		print(complete_df)
+
+		# 画图
+		'''
 		plt.plot(complete_df.date, complete_df.read_num)
 		if re.match('AAA', file):
 			plt.title('General information', size=15)
@@ -76,6 +81,7 @@ def get_ready_and_plot_file(path):
 			print(save_article_name)
 			plt.savefig(save_path + '\\' + save_article_name +'.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
 		plt.clf() # 不加这个会保留上次的线，而重叠在一起
+		'''
 
 
 # 画出每个文件中的阅读数
