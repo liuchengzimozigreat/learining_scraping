@@ -19,6 +19,7 @@ import sys
 import os
 import re
 import datetime
+import numpy as np
 plt.rcParams['font.sans-serif']=['SimHei']  # 解决图中中文乱码问题
 
 # get files in filepath
@@ -29,7 +30,7 @@ def get_file(filepath):
 # complement missing data in the file
 def complement_file(dates, df):
 	new_df = pd.DataFrame(columns=['date']) # new_df中只有完整时间序列
-	# print(df)
+	print(df)
 	new_df.iloc[:, 0] = dates  # 将完整时间序列给new_df
 	# print(new_df)
 	new_df = pd.merge(new_df, df, how='left', on=['date']) # 将含有不完整read_num信息的df与new_df合并，这样new_df含有了完整时间序列和不完整的read_num序列
@@ -47,8 +48,8 @@ def get_ready_and_plot_file(path):
 	print(files)
 
 	for file in files:
-		# if not re.match('AAA', file): #
-		# 	continue
+		if not re.match('AAA', file): #
+			continue
 		# 准备数据
 		df = pd.read_csv(path+'\\'+file, engine='python', encoding='utf-8-sig', parse_dates=[0]) # 传入字典是解析该列并命名为date
 		print(file)
@@ -59,12 +60,16 @@ def get_ready_and_plot_file(path):
 		print(complete_df)
 
 		# 画图
-		'''
+		plt.clf() # 不加这个会保留上次的线，而重叠在一起
 		plt.plot(complete_df.date, complete_df.read_num)
 		if re.match('AAA', file):
 			plt.title('General information', size=15)
 		else:
 			plt.title(df.article_name[0])
+		ax = plt.gca()
+		plt.text(0.82,0.1, r'num_now: ' + str(complete_df.iloc[-1, 1]), color='r',transform=ax.transAxes, fontweight=100, fontsize=8) # 总阅读数
+		k = np.polyfit([elem for elem in range(1, complete_df.index.size+1)], complete_df.read_num.tolist(), 1) # 线性回归斜率
+		plt.text(0.82,0.2, r'k: ' + str(round(k[0], 0)), color='r',transform=ax.transAxes, fontweight=100, fontsize=8) # 总阅读数
 		plt.ylabel('read_num', size=20, color='red') 
 		plt.xlabel('date', size=20, color='deepskyblue')
 		plt.xticks(rotation=45)
@@ -75,13 +80,14 @@ def get_ready_and_plot_file(path):
 			plt.savefig(save_path + '\\' + 'General information.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
 		else:
 			if re.match(r'[\'.\,\:\(\)\（\）\/]*', df.article_name[0]):
-				save_article_name = re.sub(r'[\'.\,\:\(\)\（\）\/]*', '', df.article_name[0])
+				save_article_name = re.sub(r'[\'.\,\:\(\)\（\）\/\?]*', '', df.article_name[0])
 			else:
 				save_article_name = df.article_name[0]
 			print(save_article_name)
-			plt.savefig(save_path + '\\' + save_article_name +'.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
-		plt.clf() # 不加这个会保留上次的线，而重叠在一起
-		'''
+		plt.show()
+			# plt.savefig(save_path + '\\' + save_article_name +'.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
+		
+		
 
 
 # 画出每个文件中的阅读数
