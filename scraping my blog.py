@@ -70,7 +70,7 @@ def save_general_info(soup):
 	
 
 	# 存储总体信息
-	file_path = r'H:\learning like never feel tired\Scraping python\my_blog_info' # 存储位置
+	file_path = r'F:\learning like never feel tired\Scraping python\my_blog_info' # 存储位置
 	general_info_file = file_path + '\\AAA_general_info.csv' # 前面加三个A好让总体信息出现在文件夹第一的位置
 	if os.path.exists(general_info_file):
 		df = pd.read_csv(general_info_file, index_col=0, engine='python', encoding='utf_8_sig', parse_dates=[0])
@@ -81,7 +81,7 @@ def save_general_info(soup):
 
 def save_articles_info(soup):
 
-	file_path = r'H:\learning like never feel tired\Scraping python\my_blog_info' # 存储位置
+	file_path = r'F:\learning like never feel tired\Scraping python\my_blog_info' # 存储位置
 
 	# 提取各个文章的信息
 	script_lst = soup.find_all('script') # 提取其中的script标签tag，其中script_lst[-9]含有listtotal和pagesize信息
