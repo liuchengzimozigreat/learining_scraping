@@ -48,8 +48,8 @@ def get_ready_and_plot_file(path):
 	print(files)
 
 	for file in files:
-		if not re.match('AAA', file): #
-			continue
+		# if not re.match('AAA', file): #
+		# 	continue
 		# 准备数据
 		df = pd.read_csv(path+'\\'+file, engine='python', encoding='utf-8-sig', parse_dates=[0]) # 传入字典是解析该列并命名为date
 		print(file)
@@ -75,7 +75,7 @@ def get_ready_and_plot_file(path):
 		plt.xticks(rotation=45)
 		plt.grid(axis='y')
 		# plt.show()
-		save_path = r'H:\learning like never feel tired\Scraping python\blog_info_plot'
+		save_path = r'F:\learning like never feel tired\learning_scraping\blog_info_plot'
 		if re.match('AAA', file):
 			plt.savefig(save_path + '\\' + 'General information.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
 		else:
@@ -84,22 +84,22 @@ def get_ready_and_plot_file(path):
 			else:
 				save_article_name = df.article_name[0]
 			print(save_article_name)
-		plt.show()
-			# plt.savefig(save_path + '\\' + save_article_name +'.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
+		# plt.show()
+		plt.savefig(save_path + '\\' + save_article_name +'.png', bbox_inches='tight', dpi=300)  #bbox_inches='tight'帮助删除图片空白部分
 		
 		
 
 
 # 画出每个文件中的阅读数
 def plot_read_num():
-	path = r'H:\learning like never feel tired\Scraping python\my_blog_info'
+	path = r'F:\learning like never feel tired\learning_scraping\my_blog_info'
 	get_ready_and_plot_file(path)
 
 	
 
 # 有时文章信息不对，这里来改正之
 def correct_article_info():
-	path = r'H:\learning like never feel tired\Scraping python\my_blog_info'
+	path = r'F:\learning like never feel tired\learning_scraping\my_blog_info'
 
 	file_lst = get_file(path)
 
@@ -119,9 +119,6 @@ def correct_article_info():
 		df.article_id = [df.article_id[len(df.article_id)-1]]*len(df.article_id)
 		print(df)
 		df.to_csv(path+'\\'+file, encoding='utf_8_sig')
-
-
-
 
 
 if __name__ == '__main__':

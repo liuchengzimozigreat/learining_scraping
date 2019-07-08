@@ -28,7 +28,7 @@ def get_allpages_url(page_info):
 
 # 获取总体信息
 def get_general_info(soup):
-	general_info = soup.find('div', {'class': 'data-info d-flex item-tiling'})
+	general_info = soup.find('div', {'class':'data-info d-flex item-tiling'})
 	dl_info = general_info.find_all('dl')
 	# print(info)
 	self_article_num = dl_info[0]['title'] # 原创文章数量
@@ -150,7 +150,12 @@ if __name__ == '__main__':
 
 	# find list of image holder
 	html = requests.get(URL).text
+	# print(html) # HTML乱码了，无端自己又好了
 	soup = BeautifulSoup(html, 'lxml')
+
+	print('***'*20)
+	# print(soup)
+	print('***'*20)
 
 	save_general_info(soup)
 
