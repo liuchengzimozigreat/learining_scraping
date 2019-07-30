@@ -29,6 +29,7 @@ def get_allpages_url(page_info):
 # 获取总体信息
 def get_general_info(soup):
 	general_info = soup.find('div', {'class':'data-info d-flex item-tiling'})
+	print(general_info)
 	dl_info = general_info.find_all('dl')
 	# print(info)
 	self_article_num = dl_info[0]['title'] # 原创文章数量
